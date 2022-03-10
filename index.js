@@ -54,12 +54,9 @@ app.get('/api/blogs', async (req, res) => {
 
 app.post('/api/blogs', async (req, res) => {
   try {
-    console.log("data", req.body)
     const blog = await Blog.create(req.body)
     return res.json(blog).status(201)
   } catch(error) {
-    console.log(req.body)
-
     return res.status(400).json({ error: error.message })
   }
 })
