@@ -10,6 +10,26 @@ app.use(express.json())
 
 app.use('/api/blogs', blogsRouter)
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+const errorHandler = (error, request, response, next) => {
+  console.log(`Error message = [${error.message}]`)
+  console.log(`Error name = [${error.name}]`)
+
+  if (error.name === 'SequelizeValidationError') {
+    return response.status(400).send({ error: error.message })
+  } else if (error.name === 'SequelizeDatabaseError') {
+    return response.status(400).send({ error: 'Invalid data type' })
+  }
+
+  next(errorHandler)
+}
+
+app.use(unknownEndpoint)
+app.use(errorHandler)
+
 const startServer = async () => {
   await connectToDatabase()
   app.listen(PORT, () => {
