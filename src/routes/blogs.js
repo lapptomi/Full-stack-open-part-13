@@ -22,7 +22,11 @@ const tokenExtractor = (req, res, next) => {
 
 router.get('/', async (req, res) => {
   try {
-    const blogs = await Blog.findAll()
+    const blogs = await Blog.findAll({
+      include: {
+        model: User,
+      }
+    })
     return res.json(blogs).status(200)
   } catch (error) {
     return res.status(400).json({ error: error.message })
