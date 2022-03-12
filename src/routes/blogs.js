@@ -39,7 +39,7 @@ router.post('/', tokenExtractor, async (req, res, next) => {
   }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', tokenExtractor, async (req, res) => {
   try {
     const blog = await Blog.destroy({ where: { id: req.params.id } })
     return res.json(blog).status(204)
