@@ -24,6 +24,13 @@ module.exports = {
         allowNull: false,
         defaultValue: 0
       },
+      year: {
+        type: DataTypes.INTEGER,
+        validate: {
+          min: 1991,
+          max: 2022
+        }
+      },
     })
     await queryInterface.createTable('users', {
       id: {
@@ -42,6 +49,12 @@ module.exports = {
           isEmail: true
         }
       },
+      created_at: {
+        type: DataTypes.DATE
+      },
+      updated_at: {
+        type: DataTypes.DATE
+      }
     })
     await queryInterface.addColumn('blogs', 'user_id', {
       type: DataTypes.INTEGER,
