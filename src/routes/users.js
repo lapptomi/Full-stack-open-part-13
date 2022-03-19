@@ -15,6 +15,15 @@ router.get('/', async (req, res) => {
   }
 })
 
+router.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findByPk(req.params.id)
+    return res.json(user).status(200)
+  } catch (error) {
+    return res.status(400).json({ error: error.message })
+  }
+})
+
 router.post('/', async (req, res, next) => {
   try {
     const user = await User.create(req.body)
