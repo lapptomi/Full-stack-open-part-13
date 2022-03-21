@@ -1,16 +1,30 @@
-const { Blog, User } = require('../models')
+const { Blog, User, Session } = require('../models')
 const { SECRET } = require('../util/config')
 
 const jwt = require('jsonwebtoken')
 const { Op } = require('sequelize')
 const router = require('express').Router()
 
-const tokenExtractor = (req, res, next) => {
+const tokenExtractor = async (req, res, next) => {
   const authorization = req.get('authorization')
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
     try {
       console.log(authorization.substring(7))
-      req.decodedToken = jwt.verify(authorization.substring(7), SECRET)
+
+      token = authorization.substring(7)
+      const session = await Session.findOne({ where: { token: token } })
+      if (!session) {
+        throw new Error('No session found')
+      }
+
+      const decodedToken = jwt.verify(authorization.substring(7), SECRET)
+      const user = await User.findByPk(decodedToken.id)
+
+      if (user.disabled === true || user.disabled === 'true') {
+        throw new Error('User is disabled')
+      }
+
+      req.decodedToken = decodedToken
     } catch (error){
       console.log(error)
       return res.status(401).json({ error: 'token invalid' })
@@ -52,10 +66,10 @@ router.get('/', async (req, res) => {
 })
 
 router.post('/', tokenExtractor, async (req, res, next) => {
-  try {
+  try {      
     const user = await User.findByPk(req.decodedToken.id)
-    const blog = await Blog.create({ ...req.body, userId: user.id })
-    return res.json(blog).status(201)
+    const blog = await Blog.create({ userId: user.id, ...req.body })
+    res.json(blog).status(201)
   } catch(error) {
     next(error)
   }

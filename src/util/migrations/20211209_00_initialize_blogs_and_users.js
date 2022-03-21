@@ -49,6 +49,11 @@ module.exports = {
           isEmail: true
         }
       },
+      disabled: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        defaultValue: false
+      },
       created_at: {
         type: DataTypes.DATE
       },

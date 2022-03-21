@@ -9,6 +9,7 @@ const usersRouter = require('./src/routes/users')
 const loginRouter = require('./src/routes/login')
 const authorRouter = require('./src/routes/author')
 const readinglistRouter = require('./src/routes/readinglists')
+const logoutRouter = require('./src/routes/logout')
 
 app.use(express.json())
 
@@ -17,6 +18,7 @@ app.use('/api/users', usersRouter)
 app.use('/api/login', loginRouter)
 app.use('/api/authors', authorRouter)
 app.use('/api/readinglists', readinglistRouter)
+app.use('/api/logout', logoutRouter)
 
 
 const unknownEndpoint = (request, response) => {
